@@ -6,7 +6,6 @@ import java.util.*;
 public class MenuService {
     private List<Dish> menu;
 
-
     public MenuService() {
         this.menu = new ArrayList<>();
     }

@@ -3,3 +3,4 @@ package com.restaurant.models;
 public enum OrderStatus {
     PENDING, PREPARING, READY, SERVED, PAID
 }
+

@@ -48,7 +48,6 @@ public class NotificationService {
         logger.log(Level.INFO, "Simulated push notification to " + recipient + ": " + message);
     }
 
-
     public void notifyStatusChange(Order order, OrderStatus oldStatus, OrderStatus newStatus) {
         String message = "Order #" + order.getOrderId() + " status changed: " + oldStatus + " → " + newStatus;
         logger.log(Level.INFO, message);

@@ -110,7 +110,6 @@ public class OrderService {
         stats.put("archivedOrders", archivedOrders.size());
         stats.put("totalRevenue", getTotalRevenue());
 
-
         Map<OrderStatus, Integer> statusCount = new HashMap<>();
         for (Order order : allOrders) {
             OrderStatus status = order.getStatus();

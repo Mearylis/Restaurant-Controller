@@ -52,7 +52,6 @@ public class TableService {
         }
         return available;
     }
-
     public List<Table> getAllTables() {
         return new ArrayList<>(tables);
     }

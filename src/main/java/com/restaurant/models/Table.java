@@ -7,7 +7,6 @@ public class Table {
     private Customer currentCustomer;
     private Order currentOrder;
 
-
     public Table(int tableNumber, int capacity) {
         this.tableNumber = tableNumber;
         this.capacity = capacity;

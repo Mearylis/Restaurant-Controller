@@ -1,6 +1,5 @@
 package com.restaurant.models;
 
-
 public class Dish {
     protected String name;
     protected double price;

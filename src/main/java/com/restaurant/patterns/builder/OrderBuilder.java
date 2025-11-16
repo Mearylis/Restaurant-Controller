@@ -9,7 +9,6 @@ public class OrderBuilder {
     private String specialInstructions;
     private Customer customer;
 
-
     public OrderBuilder() {
         this.dishes = new ArrayList<>();
         this.specialInstructions = "";

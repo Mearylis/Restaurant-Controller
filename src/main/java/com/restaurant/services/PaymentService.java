@@ -1,5 +1,4 @@
 package com.restaurant.services;
-
 public class PaymentService {
     public boolean processPayment(double amount, String method) {
         System.out.println("Processing payment: $" + String.format("%.2f", amount) + " via " + method);
