@@ -1,5 +1,4 @@
 package com.restaurant.patterns.builder;
-
 import com.restaurant.models.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +42,6 @@ public class OrderBuilder {
             throw new IllegalStateException("Order must have at least one dish!");
         }
 
-        System.out.println("Building order with " + dishes.size() + " dishes...");
-
         Order order;
         if (customer != null) {
             order = new Order(tableNumber, customer);
@@ -59,10 +56,8 @@ public class OrderBuilder {
 
         if (!specialInstructions.isEmpty()) {
             order.setSpecialInstructions(specialInstructions);
-            System.out.println("   Special instructions: " + specialInstructions);
         }
 
-        System.out.println("Order built successfully!");
         return order;
     }
 }

@@ -19,12 +19,11 @@ public class Order {
     private String assignedWaiter;
     private String assignedChef;
 
-    // ✅ ИСТОРИЯ СТАТУСОВ
     private List<StatusChange> statusHistory;
     private LocalDateTime createdAt;
     private LocalDateTime completedAt;
 
-    // ✅ КЛАСС ДЛЯ ИСТОРИИ ИЗМЕНЕНИЙ
+
     public static class StatusChange {
         private final OrderStatus fromStatus;
         private final OrderStatus toStatus;
@@ -95,16 +94,16 @@ public class Order {
         notifyObservers();
     }
 
-    // ✅ ГЕТТЕР ДЛЯ ИСТОРИИ
+
     public List<StatusChange> getStatusHistory() {
         return new ArrayList<>(statusHistory);
     }
 
-    // ✅ МЕТОД ДЛЯ ПОЛУЧЕНИЯ ВРЕМЕНИ СОЗДАНИЯ И ЗАВЕРШЕНИЯ
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getCompletedAt() { return completedAt; }
 
-    // ✅ ДОБАВЛЕНЫ DETACH МЕТОДЫ
+
     public void detach(Observer observer) {
         observers.remove(observer);
         System.out.println("👁️ Observer detached from order #" + orderId);
@@ -116,7 +115,7 @@ public class Order {
         System.out.println("👁️ All " + count + " observers detached from order #" + orderId);
     }
 
-    // ДОБАВЛЯЕМ НЕДОСТАЮЩИЕ МЕТОДЫ
+
     public void setAssignedWaiter(String waiterName) {
         this.assignedWaiter = waiterName;
         System.out.println("👨‍💼 Waiter " + waiterName + " assigned to order #" + orderId);
@@ -130,13 +129,11 @@ public class Order {
     public String getAssignedWaiter() { return assignedWaiter; }
     public String getAssignedChef() { return assignedChef; }
 
-    /**
-     * Пересчет общей суммы с учетом всех скидок
-     */
+
     public void calculateTotal() {
         totalPrice = dishes.stream().mapToDouble(Dish::getPrice).sum();
 
-        // 💵 STRATEGY PATTERN - применяем стратегию ценообразования
+
         if (pricingStrategy != null) {
             double original = totalPrice;
             totalPrice = pricingStrategy.calculatePrice(totalPrice);
