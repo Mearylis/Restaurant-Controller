@@ -20,7 +20,6 @@ public class Customer {
         this.preferences = "";
     }
 
-    // Геттеры и сеттеры
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -42,15 +41,12 @@ public class Customer {
         this.preferences = preferences;
     }
 
-    // Бизнес-логика
     public void addOrderToHistory(Order order) {
         this.orderHistory.add(order);
-        // Начисляем баллы лояльности (1 балл за каждые $10)
         this.loyaltyPoints += (int)(order.getTotalPrice() / 10);
     }
 
     public double getLoyaltyDiscount() {
-        // Скидка 5% за каждые 100 баллов (макс 15%)
         int discountTier = loyaltyPoints / 100;
         return Math.min(discountTier * 0.05, 0.15);
     }
@@ -60,14 +56,14 @@ public class Customer {
     }
 
     public String getCustomerLevel() {
-        if (loyaltyPoints >= 500) return "VIP 🏆";
-        if (loyaltyPoints >= 200) return "Gold ⭐";
-        if (loyaltyPoints >= 100) return "Silver ✨";
-        return "Regular 👤";
+        if (loyaltyPoints >= 500) return "VIP";
+        if (loyaltyPoints >= 200) return "Gold";
+        if (loyaltyPoints >= 100) return "Silver";
+        return "Regular";
     }
 
     public void receiveNotification(String message) {
-        System.out.println("📱 Notification to " + name + " (" + phone + "): " + message);
+        System.out.println("Notification to " + name + " (" + phone + "): " + message);
     }
 
     @Override

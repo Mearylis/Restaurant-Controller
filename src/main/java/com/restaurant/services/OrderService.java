@@ -3,12 +3,10 @@ package com.restaurant.services;
 import com.restaurant.models.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class OrderService {
     private List<Order> activeOrders;
-    private List<Order> archivedOrders; // ✅ АРХИВ СТАРЫХ ЗАКАЗОВ
-    private static final int MAX_ACTIVE_ORDERS = 1000; // ✅ ЛИМИТ ДЛЯ ПАМЯТИ
+    private List<Order> archivedOrders;
 
     public OrderService() {
         this.activeOrders = new ArrayList<>();
@@ -16,55 +14,53 @@ public class OrderService {
     }
 
     public void addOrder(Order order) {
-        // ✅ АВТОМАТИЧЕСКАЯ АРХИВАЦИЯ ПРИ ПРЕВЫШЕНИИ ЛИМИТА
-        if (activeOrders.size() >= MAX_ACTIVE_ORDERS) {
+        if (activeOrders.size() >= 1000) {
             archiveOldOrders();
         }
         activeOrders.add(order);
     }
 
     public Order getOrderById(int orderId) {
-        // Ищем в активных заказах
-        Order order = activeOrders.stream()
-                .filter(o -> o.getOrderId() == orderId)
-                .findFirst()
-                .orElse(null);
-
-        // Если не нашли, ищем в архиве
-        if (order == null) {
-            order = archivedOrders.stream()
-                    .filter(o -> o.getOrderId() == orderId)
-                    .findFirst()
-                    .orElse(null);
+        for (Order order : activeOrders) {
+            if (order.getOrderId() == orderId) {
+                return order;
+            }
         }
 
-        return order;
+        for (Order order : archivedOrders) {
+            if (order.getOrderId() == orderId) {
+                return order;
+            }
+        }
+
+        return null;
     }
 
-    // ✅ МЕТОД АРХИВАЦИИ СТАРЫХ ЗАКАЗОВ
     public void archiveOldOrders() {
-        LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(1); // Архивируем заказы старше 1 месяца
+        LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(1);
+        List<Order> toArchive = new ArrayList<>();
 
-        List<Order> toArchive = activeOrders.stream()
-                .filter(o -> o.getCompletedAt() != null && o.getCompletedAt().isBefore(cutoffDate))
-                .collect(Collectors.toList());
+        for (Order order : activeOrders) {
+            if (order.getCompletedAt() != null && order.getCompletedAt().isBefore(cutoffDate)) {
+                toArchive.add(order);
+            }
+        }
 
         activeOrders.removeAll(toArchive);
         archivedOrders.addAll(toArchive);
-
-        System.out.println("📦 Archived " + toArchive.size() + " old orders");
     }
 
-    // ✅ РУЧНАЯ АРХИВАЦИЯ
     public void archiveOrdersOlderThan(LocalDateTime cutoffDate) {
-        List<Order> toArchive = activeOrders.stream()
-                .filter(o -> o.getCompletedAt() != null && o.getCompletedAt().isBefore(cutoffDate))
-                .collect(Collectors.toList());
+        List<Order> toArchive = new ArrayList<>();
+
+        for (Order order : activeOrders) {
+            if (order.getCompletedAt() != null && order.getCompletedAt().isBefore(cutoffDate)) {
+                toArchive.add(order);
+            }
+        }
 
         activeOrders.removeAll(toArchive);
         archivedOrders.addAll(toArchive);
-
-        System.out.println("📦 Manually archived " + toArchive.size() + " orders older than " + cutoffDate);
     }
 
     public List<Order> getAllOrders() {
@@ -86,18 +82,24 @@ public class OrderService {
     }
 
     public double getTotalRevenue() {
-        return getAllOrders().stream()
-                .filter(o -> o.getStatus() == OrderStatus.PAID)
-                .mapToDouble(Order::getTotalPrice)
-                .sum();
+        double total = 0;
+        for (Order order : getAllOrders()) {
+            if (order.getStatus() == OrderStatus.PAID) {
+                total += order.getTotalPrice();
+            }
+        }
+        return total;
     }
 
     public int getActiveOrderCount() {
-        return (int) activeOrders.stream()
-                .filter(o -> o.getStatus() != OrderStatus.PAID)
-                .count();
+        int count = 0;
+        for (Order order : activeOrders) {
+            if (order.getStatus() != OrderStatus.PAID) {
+                count++;
+            }
+        }
+        return count;
     }
-
 
     public Map<String, Object> getOrderStatistics() {
         Map<String, Object> stats = new HashMap<>();
@@ -108,8 +110,11 @@ public class OrderService {
         stats.put("archivedOrders", archivedOrders.size());
         stats.put("totalRevenue", getTotalRevenue());
 
-        Map<OrderStatus, Long> statusCount = allOrders.stream()
-                .collect(Collectors.groupingBy(Order::getStatus, Collectors.counting()));
+        Map<OrderStatus, Integer> statusCount = new HashMap<>();
+        for (Order order : allOrders) {
+            OrderStatus status = order.getStatus();
+            statusCount.put(status, statusCount.getOrDefault(status, 0) + 1);
+        }
         stats.put("statusDistribution", statusCount);
 
         return stats;

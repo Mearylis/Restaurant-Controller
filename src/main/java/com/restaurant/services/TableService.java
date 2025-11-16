@@ -15,29 +15,32 @@ public class TableService {
     }
 
     public boolean isTableAvailable(int tableNumber) {
-        return tables.stream()
-                .filter(t -> t.getTableNumber() == tableNumber)
-                .findFirst()
-                .map(t -> !t.isOccupied())
-                .orElse(false);
+        for (Table table : tables) {
+            if (table.getTableNumber() == tableNumber) {
+                return !table.isOccupied();
+            }
+        }
+        return false;
     }
 
-    public void occupyTable(int tableNumber) {
-        tables.stream()
-                .filter(t -> t.getTableNumber() == tableNumber)
-                .findFirst()
-                .ifPresent(t -> {
-                    if (!t.isOccupied()) {
-                        t.occupyTable(new Customer("Guest", "000-0000", "guest@email.com"));
-                    }
-                });
+    public void occupyTable(int tableNumber, Customer customer) {
+        for (Table table : tables) {
+            if (table.getTableNumber() == tableNumber) {
+                if (!table.isOccupied()) {
+                    table.occupyTable(customer);
+                }
+                break;
+            }
+        }
     }
 
     public void freeTable(int tableNumber) {
-        tables.stream()
-                .filter(t -> t.getTableNumber() == tableNumber)
-                .findFirst()
-                .ifPresent(Table::freeTable);
+        for (Table table : tables) {
+            if (table.getTableNumber() == tableNumber) {
+                table.freeTable();
+                break;
+            }
+        }
     }
 
     public List<Table> getAvailableTables() {
@@ -55,9 +58,11 @@ public class TableService {
     }
 
     public Table getTableByNumber(int tableNumber) {
-        return tables.stream()
-                .filter(t -> t.getTableNumber() == tableNumber)
-                .findFirst()
-                .orElse(null);
+        for (Table table : tables) {
+            if (table.getTableNumber() == tableNumber) {
+                return table;
+            }
+        }
+        return null;
     }
 }

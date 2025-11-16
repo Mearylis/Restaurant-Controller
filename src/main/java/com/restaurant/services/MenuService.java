@@ -15,10 +15,12 @@ public class MenuService {
     }
 
     public Dish getDishByName(String name) {
-        return menu.stream()
-                .filter(d -> d.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+        for (Dish dish : menu) {
+            if (dish.getName().equalsIgnoreCase(name)) {
+                return dish;
+            }
+        }
+        return null;
     }
 
     public List<Dish> getAllDishes() {
@@ -26,7 +28,14 @@ public class MenuService {
     }
 
     public boolean removeDish(String name) {
-        return menu.removeIf(d -> d.getName().equalsIgnoreCase(name));
+        for (Iterator<Dish> iterator = menu.iterator(); iterator.hasNext();) {
+            Dish dish = iterator.next();
+            if (dish.getName().equalsIgnoreCase(name)) {
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean updateDish(String oldName, Dish newDish) {

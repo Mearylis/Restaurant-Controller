@@ -25,15 +25,12 @@ public class Employee {
         this.assignedOrders = new CopyOnWriteArrayList<>();
         this.completedOrdersToday = 0;
 
-        switch (role.toLowerCase()) {
-            case "waiter":
-                this.maxOrders = Config.WAITER_MAX_ORDERS;
-                break;
-            case "chef":
-                this.maxOrders = Config.CHEF_MAX_ORDERS;
-                break;
-            default:
-                this.maxOrders = Config.MANAGER_MAX_ORDERS;
+        if (role.equalsIgnoreCase("waiter")) {
+            this.maxOrders = Config.WAITER_MAX_ORDERS;
+        } else if (role.equalsIgnoreCase("chef")) {
+            this.maxOrders = Config.CHEF_MAX_ORDERS;
+        } else {
+            this.maxOrders = Config.MANAGER_MAX_ORDERS;
         }
     }
 
@@ -43,7 +40,6 @@ public class Employee {
 
     public synchronized boolean assignOrder(Order order) {
         if (!canTakeMoreOrders()) {
-            System.out.println("❌ " + name + " cannot take more orders (max: " + maxOrders + ")");
             return false;
         }
 
@@ -55,25 +51,22 @@ public class Employee {
             order.setAssignedChef(name);
         }
 
-        System.out.println("✅ " + name + " assigned to order #" + order.getOrderId());
         return true;
     }
 
     public synchronized void completeOrder(Order order) {
         if (assignedOrders.remove(order)) {
             completedOrdersToday++;
-            System.out.println("✅ " + name + " completed order #" + order.getOrderId() +
-                    " (completed today: " + completedOrdersToday + ")");
         }
     }
 
     public String getWorkloadStatus() {
-        if (!isOnDuty) return "🔴 Off Duty";
+        if (!isOnDuty) return "Off Duty";
 
         int workloadPercent = (assignedOrders.size() * 100) / maxOrders;
-        if (workloadPercent < 40) return "🟢 Light (" + assignedOrders.size() + "/" + maxOrders + ")";
-        if (workloadPercent < 75) return "🟡 Moderate (" + assignedOrders.size() + "/" + maxOrders + ")";
-        return "🔴 Heavy (" + assignedOrders.size() + "/" + maxOrders + ")";
+        if (workloadPercent < 40) return "Light (" + assignedOrders.size() + "/" + maxOrders + ")";
+        if (workloadPercent < 75) return "Moderate (" + assignedOrders.size() + "/" + maxOrders + ")";
+        return "Heavy (" + assignedOrders.size() + "/" + maxOrders + ")";
     }
 
     public double getEfficiency() {
@@ -94,11 +87,9 @@ public class Employee {
 
     public void startShift() {
         this.isOnDuty = true;
-        System.out.println("🟢 " + name + " started shift");
     }
 
     public void endShift() {
         this.isOnDuty = false;
-        System.out.println("🔴 " + name + " ended shift. Completed: " + completedOrdersToday);
     }
 }
